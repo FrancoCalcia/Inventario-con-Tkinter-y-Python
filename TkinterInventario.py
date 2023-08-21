@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import font
+from tkinter import messagebox
 
 
 
@@ -93,12 +94,12 @@ class Menu:
         self.precio.pack()
         self.entry4.pack()  
         
-        self.button = tk.Button(self.frame, text="Guardar",command=self.guardarEnInventario,  bg="#9B59B6", fg="white", width=20, font=boton_font) #Se le da el comando al boton de que guarde en el inventario lo ingresado
+        self.button = tk.Button(self.frame, text="Guardar cambios",command=self.guardarEnInventario,  bg="#9B59B6", fg="white", width=20, font=boton_font) #Se le da el comando al boton de que guarde en el inventario lo ingresado
         self.button.pack(pady=5)
        
-       #Cuando se presione el boton de "Volver", se procederá a cerrar la ventana 
-        self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaProducto.destroy,  bg="#9B59B6", fg="white", width=20, font=boton_font)
-        self.Volver.pack()
+       #Cuando se presione el boton de "Cerrar", se procederá a cerrar la ventana 
+        self.Cerrar = tk.Button(self.frame, text="Cerrar",command=self.ventanaProducto.destroy,  bg="#C00C0C", fg="white", width=20, font=boton_font)
+        self.Cerrar.pack()
         
     
     def GUIDescripcion(self): #GUI para actualizar la descripcion
@@ -123,11 +124,11 @@ class Menu:
         self.precio.pack() 
         self.entry1.pack()
         
-        self.guardar = tk.Button(self.frame, text="Guardar",command=self.actualizarDescripcion, bg="#9B59B6", fg="white", width=20, font=boton_font)
+        self.guardar = tk.Button(self.frame, text="Guardar cambios",command=self.actualizarDescripcion, bg="#9B59B6", fg="white", width=20, font=boton_font)
         self.guardar.pack(pady=5) 
         
-        self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaDescripcion.destroy, bg="#9B59B6", fg="white", width=20, font=boton_font)
-        self.Volver.pack() 
+        self.Cerrar = tk.Button(self.frame, text="Cerrar",command=self.ventanaDescripcion.destroy, bg="#C00C0C", fg="white", width=20, font=boton_font)
+        self.Cerrar.pack() 
     
     
     def GUIMarca(self): #GUI para actualizar la marca
@@ -152,11 +153,11 @@ class Menu:
         self.precio.pack() 
         self.entry2.pack()
         
-        self.guardar = tk.Button(self.frame, text="Guardar",command=self.actualizarMarca, bg="#9B59B6", fg="white", width=20, font=boton_font)
+        self.guardar = tk.Button(self.frame, text="Guardar cambios",command=self.actualizarMarca, bg="#9B59B6", fg="white", width=20, font=boton_font)
         self.guardar.pack(pady=5) 
         
-        self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaMarca.destroy, bg="#9B59B6", fg="white", width=20, font=boton_font)
-        self.Volver.pack()
+        self.Cerrar = tk.Button(self.frame, text="Cerrar",command=self.ventanaMarca.destroy, bg="#C00C0C", fg="white", width=20, font=boton_font)
+        self.Cerrar.pack()
     
     
     def GUIStock(self): #GUI para actualizar el Stock
@@ -181,11 +182,11 @@ class Menu:
         self.precio.pack() 
         self.entry3.pack()
         
-        self.guardar = tk.Button(self.frame, text="Guardar",command=self.actualizarStock, bg="#9B59B6", fg="white", width=20, font=boton_font)
+        self.guardar = tk.Button(self.frame, text="Guardar cambios",command=self.actualizarStock, bg="#9B59B6", fg="white", width=20, font=boton_font)
         self.guardar.pack(pady=5) 
         
-        self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaStock.destroy, bg="#9B59B6", fg="white", width=20, font=boton_font)
-        self.Volver.pack() 
+        self.Cerrar = tk.Button(self.frame, text="Cerrar",command=self.ventanaStock.destroy, bg="#C00C0C", fg="white", width=20, font=boton_font)
+        self.Cerrar.pack() 
     
          
     def GUIPrecio(self): #GUI para actualizar el precio
@@ -210,19 +211,32 @@ class Menu:
         self.precio.pack() 
         self.entry4.pack()
         
-        self.guardar = tk.Button(self.frame, text="Guardar",command=self.actualizarPrecio,bg="#9B59B6", fg="white", width=20, font=boton_font)
+        self.guardar = tk.Button(self.frame, text="Guardar cambios",command=self.actualizarPrecio,bg="#9B59B6", fg="white", width=20, font=boton_font)
         self.guardar.pack(pady=5)
         
-        self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaPrecio.destroy,bg="#9B59B6", fg="white", width=20, font=boton_font)
-        self.Volver.pack()      
+        self.Cerrar = tk.Button(self.frame, text="Cerrar",command=self.ventanaPrecio.destroy,bg="#C00C0C", fg="white", width=20, font=boton_font)
+        self.Cerrar.pack()      
 
 
     def guardarEnInventario(self): #Funcion para guardar en el inventario
         codigo = self.entry.get() #Obtiene el contenido del campo de entrada de texto
         descripcion = self.entry1.get()
         marca = self.entry2.get()
-        stock = int(self.entry3.get())
-        precio = float(self.entry4.get())
+        stock = self.entry3.get()
+        precio = self.entry4.get()
+        
+        #en este caso lo que hago es evaluar si la entrada de precio y stock
+        #son numeros int o float. En caso de no ser asi con el ValueError lo que
+        # hago es que no me imprima el error por pantalla
+        try:
+            stock1 = int(stock)
+        except ValueError:
+            stock1 = None
+            
+        try:
+            precio1 = float(precio)
+        except ValueError:
+            precio1 = None
         
         self.entry.delete(0, tk.END) #.delete() sirve para eliminar la entrada de texto luego de guardar los datos
         self.entry1.delete(0, tk.END)
@@ -230,12 +244,18 @@ class Menu:
         self.entry3.delete(0, tk.END)
         self.entry4.delete(0, tk.END)
         
-        if codigo in self.inventario: #Evaluamos que no se repitan los codigos de los productos
-            print("El codigo ya existe en el inventario")
+        if codigo in self.inventario: #Evaluamos que no se repitan los codigos de los productos y si el ingreso de stock y precio es correcto.
+            messagebox.showinfo("Error", "El codigo ya existe en el inventario")
+        elif stock1 == None:
+            messagebox.showinfo("Error", "Ingrese el stock correcto")
+        elif precio1 == None:
+            messagebox.showinfo("Error", "Ingrese el precio correcto")   
         else:
             self.inventario[codigo] = {"Descripción": descripcion,"Marca": marca ,"Stock": stock, "Precio": precio}
-            print("Producto cargado con éxito") #guardamos el codigo con sus respectivos datos
+            messagebox.showinfo("Éxito", "Producto cargado con éxito") #guardamos el codigo con sus respectivos datos
 
+    
+    
     def actualizarDescripcion(self): #Funcion para actualizar la descripcion
         codigo = self.entry.get() #Se toman los datos del campo de codigo
         nueva_desc = self.entry1.get() #Se toman los datos del campo de la descripción
@@ -243,9 +263,9 @@ class Menu:
         #Se evalua si el codigo existe en el inventario, de ser asi. Se actualiza con los nuevos datos
         if codigo in self.inventario: 
             self.inventario[codigo]["Descripción"] = nueva_desc
-            print("La nueva descripcion del producto es:", nueva_desc)
+            messagebox.showinfo("Éxito",f"La nueva descripción del producto es: {nueva_desc}")
         else:
-            print("Código no encontrado en el inventario")
+            messagebox.showinfo("Error", "El código no existe en el inventario")
         
         self.entry.delete(0, tk.END)
         self.entry1.delete(0, tk.END)
@@ -256,50 +276,69 @@ class Menu:
         
         if codigo in self.inventario:
             self.inventario[codigo]["Marca"] = nueva_marca
-            print("La nueva marca del producto es:", nueva_marca)
+            messagebox.showinfo("Éxito",f"La nueva marca del producto es: {nueva_marca}")
         else:
-            print("Código no encontrado en el inventario")
+            messagebox.showinfo("Error", "El código no existe en el inventario")
 
         self.entry.delete(0, tk.END)
         self.entry2.delete(0, tk.END)
         
     def actualizarStock(self):
         codigo = self.entry.get()
-        nuevo_stock = self.entry3.get()
+        try:
+            nuevo_stock = int(self.entry3.get())
+        except ValueError:
+            nuevo_stock = None
         
-        if codigo in self.inventario:
+        if nuevo_stock == None:
+            messagebox.showinfo("Error", "Ingrese el stock correcto")
+        elif codigo in self.inventario:
             self.inventario[codigo]["Stock"] = nuevo_stock
-            print("El nuevo stock del producto es:", nuevo_stock)
+            messagebox.showinfo("Éxito",f"El nuevo stock del producto es: {nuevo_stock}")
         else:
-            print("Código no encontrado en el inventario")
-    
+            messagebox.showinfo("Error", "El código no existe en el inventario")
+        
         self.entry.delete(0, tk.END)
         self.entry3.delete(0, tk.END)
     
     def actualizarPrecio(self):
         codigo = self.entry.get()
-        nuevo_precio = self.entry4.get()
+        try:
+            nuevo_precio = float(self.entry4.get())
+        except ValueError:
+            nuevo_precio = None
         
-        if codigo in self.inventario:
+        if nuevo_precio == None:
+            messagebox.showinfo("Error", "Ingrese el precio correcto")
+        elif codigo in self.inventario:
             self.inventario[codigo]["Precio"] = nuevo_precio
-            print("El nuevo precio del producto es:", nuevo_precio)
+            messagebox.showinfo("Éxito",f"El nuevo precio del producto es: {nuevo_precio}")
         else:
-            print("Código no encontrado en el inventario")
+            messagebox.showinfo("Error", "El código no existe en el inventario")
     
         self.entry.delete(0, tk.END)
         self.entry4.delete(0, tk.END)
     
     
     def mostrarInventario(self): #Mostramos el inventario
-        for codigo, detalles in self.inventario.items():
-            print(f"Código: {codigo}")
-            print(f"Descripción: {detalles['Descripción']}")
-            print(f"Marca: {detalles['Marca']}")
-            print(f"Stock: {detalles['Stock']}")
-            print(f"Precio: {detalles['Precio']}")
-            print()
+        self.ventanaInventario= Toplevel()
+        self.ventanaInventario.title("Inventario")
+        self.ventanaInventario.configure(bg="black")
         
+        texto=tk.Text(self.ventanaInventario, bg="#AF7AC5", fg="white")
+        texto.pack(padx=40, pady=20)
+        
+        for codigo, detalles in self.inventario.items():
+            texto.insert(tk.END,f"Código: {codigo}\n")
+            texto.insert(tk.END,f"Descripción: {detalles['Descripción']}\n")
+            texto.insert(tk.END,f"Marca: {detalles['Marca']}\n")
+            texto.insert(tk.END,f"Stock: {detalles['Stock']}\n")
+            texto.insert(tk.END,f"Precio: {detalles['Precio']}\n\n")
+            
+        Cerrar_button = tk.Button(self.ventanaInventario, text="Cerrar", command=self.ventanaInventario.destroy,bg="#C00C0C", fg="white", width=10)
+        Cerrar_button.pack(pady=15)
      #Se imprime por pantalla los datos del diccionario
+     
      
 
 #Se inicializa el programa     
