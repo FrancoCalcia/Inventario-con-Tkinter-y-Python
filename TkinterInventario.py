@@ -4,43 +4,49 @@ from tkinter import *
 
 
 class Menu:
-    def __init__(self,ventana):
+    def __init__(self,ventana): #En esta funcion se ve el programa principal
         self.ventana=ventana
-        self.ventana.title("Inventario de productos") #nombre de productos
+        self.ventana.title("Inventario de productos") #nombre de la ventana
     
-        self.inventario={}
-        self.main_frame1 = tk.Frame(self.ventana) #Frame sirve para contener a los widgets
-        self.main_frame1.pack(padx=90, pady=60)
+        self.inventario={} #inventario donde se van a guardar los productos
         
-        self.AgrProd = tk.Button(self.main_frame1, text="Agregar Producto",command=self.AgregarProducto)
+        self.frame1 = tk.Frame(self.ventana) #Frame sirve para contener a los widgets
+        self.frame1.pack(padx=90, pady=60) #Esta es la dimension del contenedor
+        
+        #De aca en adelante se van a crear los botones donde si se presionan te redirije a la
+        #ventana de cada uno
+        self.AgrProd = tk.Button(self.frame1, text="Agregar Producto",command=self.AgregarProducto)
         self.AgrProd.pack()
         
-        self.MostDesc=tk.Button(self.main_frame1, text="Actualizar la descripción", command=self.GUIDescripcion)
+        self.MostDesc=tk.Button(self.frame1, text="Actualizar la descripción", command=self.GUIDescripcion)
         self.MostDesc.pack()
         
-        self.MostMarc=tk.Button(self.main_frame1, text="Actualizar la marca", command=self.GUIMarca)
+        self.MostMarc=tk.Button(self.frame1, text="Actualizar la marca", command=self.GUIMarca)
         self.MostMarc.pack()
         
-        self.ActStock = tk.Button(self.main_frame1, text="Actualizar el stock",command=self.GUIStock)
+        self.ActStock = tk.Button(self.frame1, text="Actualizar el stock",command=self.GUIStock)
         self.ActStock.pack()
         
-        self.ActPrecio = tk.Button(self.main_frame1, text="Actualizar el precio",command=self.GUIPrecio)
+        self.ActPrecio = tk.Button(self.frame1, text="Actualizar el precio",command=self.GUIPrecio)
         self.ActPrecio.pack()
         
-        self.MostInven=tk.Button(self.main_frame1, text="Mostrar Inventario", command=self.mostrarInventario)
+        self.MostInven=tk.Button(self.frame1, text="Mostrar Inventario", command=self.mostrarInventario)
         self.MostInven.pack()
+    
+    
      
-    def AgregarProducto(self):
-        self.ventanaProducto= Toplevel()
-        self.ventanaProducto.title("Agregar productos")#nombre de productos
+    def AgregarProducto(self): #Funcion donde se van a poder crear los productos
         
-        self.frame = tk.Frame(self.ventanaProducto) #Frame sirve para contener a los widgets
-        self.frame.pack(padx=90, pady=60) #Aca se le asigna el tamaño
+        self.ventanaProducto= Toplevel() #Toplevel sirve para la creacion de otra ventana
+        self.ventanaProducto.title("Agregar productos") #nombre de productos
+        
+        self.frame = tk.Frame(self.ventanaProducto) 
+        self.frame.pack(padx=90, pady=60) 
 
         self.codigo=tk.Label(self.frame, text="Código del producto") #Crea una etiqueta
         self.entry = tk.Entry(self.frame) #Campo de entrada de texto
         self.codigo.pack()
-        self.entry.pack() #empaqueta la entrada de texto
+        self.entry.pack() #.pack() sirve para empaquetar los widgets
         
         
         self.descripcion=tk.Label(self.frame, text="Descripción") 
@@ -55,12 +61,10 @@ class Menu:
         self.entry2.pack() 
         
         
-        
         self.stock=tk.Label(self.frame, text="Stock") 
         self.entry3 = tk.Entry(self.frame) 
         self.stock.pack()
         self.entry3.pack() 
-        
         
         
         self.precio=tk.Label(self.frame, text="Precio") 
@@ -70,6 +74,7 @@ class Menu:
         self.entry4.pack() 
         self.button.pack()
        
+       #Cuando se presione el boton de "Volver", se procederá a cerrar la ventana 
         self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaProducto.destroy)
         self.Volver.pack()
         
@@ -81,35 +86,30 @@ class Menu:
         stock = self.entry3.get()
         precio = self.entry4.get()
         
-        self.entry.delete(0, tk.END)
+        self.entry.delete(0, tk.END) #.delete() sirve para eliminar la entrada de texto luego de guardar los datos
         self.entry1.delete(0, tk.END)
         self.entry2.delete(0, tk.END)
         self.entry3.delete(0, tk.END)
         self.entry4.delete(0, tk.END)
         
-        if codigo in self.inventario:
-            
+        if codigo in self.inventario: #Evaluamos que no se repitan los codigos de los productos
             print("El codigo ya existe en el inventario")
         else:
             self.inventario[codigo] = {"Descripción": descripcion,"Marca": marca ,"Stock": stock, "Precio": precio}
-            print("Producto cargado con éxito") 
-
-
+            print("Producto cargado con éxito") #guardamos el codigo con sus respectivos datos
     
     
-        
-    
-    def GUIDescripcion(self):
+    def GUIDescripcion(self): #GUI para actualizar la descripcion
         self.ventanaDescripcion= Toplevel()
-        self.ventanaDescripcion.title("Actualizar la descripción")#nombre de productos
+        self.ventanaDescripcion.title("Actualizar la descripción") 
         
-        self.frame = tk.Frame(self.ventanaDescripcion) #Frame sirve para contener a los widgets
-        self.frame.pack(padx=90, pady=60) #Aca se le asigna el tamaño
+        self.frame = tk.Frame(self.ventanaDescripcion)
+        self.frame.pack(padx=90, pady=60)
 
-        self.codigo=tk.Label(self.frame, text="Código del producto") #Crea una etiqueta
-        self.entry = tk.Entry(self.frame) #Campo de entrada de texto
+        self.codigo=tk.Label(self.frame, text="Código del producto") 
+        self.entry = tk.Entry(self.frame) 
         self.codigo.pack()
-        self.entry.pack() #empaqueta la entrada de texto
+        self.entry.pack()
         
         self.precio=tk.Label(self.frame, text="Descripción") 
         self.entry1 = tk.Entry(self.frame)
@@ -121,17 +121,18 @@ class Menu:
         self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaDescripcion.destroy)
         self.Volver.pack() 
     
-    def GUIMarca(self):
+    
+    def GUIMarca(self): #GUI para actualizar la marca
         self.ventanaMarca= Toplevel()
-        self.ventanaMarca.title("Actualizar la marca")#nombre de productos
+        self.ventanaMarca.title("Actualizar la marca")
         
-        self.frame = tk.Frame(self.ventanaMarca) #Frame sirve para contener a los widgets
-        self.frame.pack(padx=90, pady=60) #Aca se le asigna el tamaño
+        self.frame = tk.Frame(self.ventanaMarca) 
+        self.frame.pack(padx=90, pady=60) 
 
-        self.codigo=tk.Label(self.frame, text="Código del producto") #Crea una etiqueta
-        self.entry = tk.Entry(self.frame) #Campo de entrada de texto
+        self.codigo=tk.Label(self.frame, text="Código del producto") 
+        self.entry = tk.Entry(self.frame) 
         self.codigo.pack()
-        self.entry.pack() #empaqueta la entrada de texto
+        self.entry.pack() 
         
         self.precio=tk.Label(self.frame, text="Marca") 
         self.entry2 = tk.Entry(self.frame)
@@ -143,17 +144,18 @@ class Menu:
         self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaMarca.destroy)
         self.Volver.pack()
     
-    def GUIStock(self):
+    
+    def GUIStock(self): #GUI para actualizar el Stock
         self.ventanaStock= Toplevel()
-        self.ventanaStock.title("Actualizar Stock")#nombre de productos
+        self.ventanaStock.title("Actualizar Stock")
         
-        self.frame = tk.Frame(self.ventanaStock) #Frame sirve para contener a los widgets
-        self.frame.pack(padx=90, pady=60) #Aca se le asigna el tamaño
+        self.frame = tk.Frame(self.ventanaStock) 
+        self.frame.pack(padx=90, pady=60) 
 
-        self.codigo=tk.Label(self.frame, text="Código del producto") #Crea una etiqueta
-        self.entry = tk.Entry(self.frame) #Campo de entrada de texto
+        self.codigo=tk.Label(self.frame, text="Código del producto") 
+        self.entry = tk.Entry(self.frame) 
         self.codigo.pack()
-        self.entry.pack() #empaqueta la entrada de texto
+        self.entry.pack() 
         
         self.precio=tk.Label(self.frame, text="Stock") 
         self.entry3 = tk.Entry(self.frame)
@@ -164,18 +166,19 @@ class Menu:
         
         self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaStock.destroy)
         self.Volver.pack() 
+    
          
-    def GUIPrecio(self):
+    def GUIPrecio(self): #GUI para actualizar el precio
         self.ventanaPrecio= Toplevel()
-        self.ventanaPrecio.title("Actualizar precio")#nombre de productos
+        self.ventanaPrecio.title("Actualizar precio")
         
-        self.frame = tk.Frame(self.ventanaPrecio) #Frame sirve para contener a los widgets
-        self.frame.pack(padx=90, pady=60) #Aca se le asigna el tamaño
+        self.frame = tk.Frame(self.ventanaPrecio) 
+        self.frame.pack(padx=90, pady=60) 
 
-        self.codigo=tk.Label(self.frame, text="Código del producto") #Crea una etiqueta
-        self.entry = tk.Entry(self.frame) #Campo de entrada de texto
+        self.codigo=tk.Label(self.frame, text="Código del producto") 
+        self.entry = tk.Entry(self.frame) 
         self.codigo.pack()
-        self.entry.pack() #empaqueta la entrada de texto
+        self.entry.pack() 
         
         self.precio=tk.Label(self.frame, text="Precio") 
         self.entry4 = tk.Entry(self.frame)
@@ -187,11 +190,13 @@ class Menu:
         self.Volver = tk.Button(self.frame, text="Volver",command=self.ventanaPrecio.destroy)
         self.Volver.pack()      
 
-    def actualizarDescripcion(self):
-        codigo = self.entry.get()
-        nueva_desc = self.entry1.get()
+
+    def actualizarDescripcion(self): #Funcion para actualizar la descripcion
+        codigo = self.entry.get() #Se toman los datos del campo de codigo
+        nueva_desc = self.entry1.get() #Se toman los datos del campo de la descripción
         
-        if codigo in self.inventario:
+        #Se evalua si el codigo existe en el inventario, de ser asi. Se actualiza con los nuevos datos
+        if codigo in self.inventario: 
             self.inventario[codigo]["Descripción"] = nueva_desc
             print("El nuevo precio del producto es:", nueva_desc)
         else:
