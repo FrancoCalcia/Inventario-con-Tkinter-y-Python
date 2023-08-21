@@ -231,8 +231,6 @@ class Menu:
         self.entry.delete(0, tk.END)
         self.entry3.delete(0, tk.END)
     
-    
-        
     def actualizarPrecio(self):
         codigo = self.entry.get()
         nuevo_precio = self.entry4.get()
@@ -247,11 +245,12 @@ class Menu:
         self.entry4.delete(0, tk.END)
     
     
-    
-    
     def mostrarInventario(self):
         print(self.inventario)
+     #Se imprime por pantalla los datos del diccionario
      
+
+#Se inicializa el programa     
 ventana=tk.Tk()
 app=Menu(ventana)
 ventana.mainloop()
