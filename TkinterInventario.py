@@ -2,12 +2,47 @@ import tkinter as tk
 from tkinter import *
 from tkinter import font
 from tkinter import messagebox
-
+import sqlite3
 
 
 class Menu:
     def __init__(self,ventana): #En esta funcion se ve el programa principal
         self.inventario={} #inventario donde se van a guardar los productos
+        
+        
+        #conectar y crear la BDD
+        self.conexion=sqlite3.connect("inventario.db")
+        #self.conexion.commit()
+        self.cursor=self.conexion.cursor()
+        
+         # Verificar si la tabla ya existe
+        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='inventario';")
+        table_exists = self.cursor.fetchone()
+
+        if not table_exists:
+            self.cursor.execute(    
+                '''CREATE TABLE inventario (
+                        codigo text primary key,
+                        descripción text,
+                        marca text,
+                        stock integer,
+                        precio real
+                    )''' 
+            )
+            #self.conexion.close()
+        self.conexion.commit()
+        
+        self.cursor.execute("SELECT * FROM inventario")
+        db_data = self.cursor.fetchall()
+        for row in db_data:
+            codigo, descripcion, marca, stock, precio = row
+            self.inventario[codigo] = {
+                "Descripción": descripcion,
+                "Marca": marca,
+                "Stock": stock,
+                "Precio": precio
+            }
+        
         
         self.ventana=ventana
         self.ventana.title("Inventario de productos") #nombre de la ventana
@@ -47,8 +82,12 @@ class Menu:
         self.ActPrecio = tk.Button(self.frame1, text="Actualizar el precio",command=self.GUIPrecio, bg="#D161FF", width=20, font=boton_font, fg="white")
         self.ActPrecio.pack(padx=20,pady=10)
         
+        self.MostInven=tk.Button(self.frame1, text="Eliminar producto", command=self.GUIEliminar, bg="#D161FF", width=20, font=boton_font, fg="white")
+        self.MostInven.pack(padx=20,pady=10)
+        
         self.MostInven=tk.Button(self.frame1, text="Mostrar Inventario", command=self.mostrarInventario, bg="#D161FF", width=20, font=boton_font, fg="white")
         self.MostInven.pack(padx=20,pady=10)
+        
     
     
      
@@ -215,15 +254,39 @@ class Menu:
         self.guardar.pack(pady=5)
         
         self.Cerrar = tk.Button(self.frame, text="Cerrar",command=self.ventanaPrecio.destroy,bg="#C00C0C", fg="white", width=20, font=boton_font)
-        self.Cerrar.pack()      
+        self.Cerrar.pack()
+        
+    def GUIEliminar(self):
+        self.ventanaEliminar= Toplevel()
+        self.ventanaEliminar.title("Eliminar producto")
+        self.ventanaEliminar.configure(bg="black")
+        
+        label_font = font.Font(family="Helvetica", size=12)
+        entry_font = font.Font(family="Helvetica", size=10)
+        boton_font = font.Font(family="Helvetica", size=10)
+        
+        self.frame = tk.Frame(self.ventanaEliminar, bg="#D161FF") 
+        self.frame.pack(padx=90, pady=60) 
 
+        self.codigo=tk.Label(self.frame, text="Código del producto", bg="#AF7AC5", fg="white", font=label_font) 
+        self.entry = tk.Entry(self.frame,font=entry_font) 
+        self.codigo.pack()
+        self.entry.pack() 
+        
+        self.guardar = tk.Button(self.frame, text="Guardar cambios",command=self.eliminarProducto,bg="#9B59B6", fg="white", width=20, font=boton_font)
+        self.guardar.pack(pady=5)
+        
+        self.Cerrar = tk.Button(self.frame, text="Cerrar",command=self.ventanaEliminar.destroy,bg="#C00C0C", fg="white", width=20, font=boton_font)
+        self.Cerrar.pack()
 
+                
     def guardarEnInventario(self): #Funcion para guardar en el inventario
         codigo = self.entry.get() #Obtiene el contenido del campo de entrada de texto
         descripcion = self.entry1.get()
         marca = self.entry2.get()
         stock = self.entry3.get()
         precio = self.entry4.get()
+
         
         #en este caso lo que hago es evaluar si la entrada de precio y stock
         #son numeros int o float. En caso de no ser asi con el ValueError lo que
@@ -254,7 +317,10 @@ class Menu:
             self.inventario[codigo] = {"Descripción": descripcion,"Marca": marca ,"Stock": stock, "Precio": precio}
             messagebox.showinfo("Éxito", "Producto cargado con éxito") #guardamos el codigo con sus respectivos datos
 
-    
+            self.cursor=self.conexion.cursor()
+            self.cursor.execute('INSERT INTO inventario (Codigo, Descripción, Marca, Stock, Precio) VALUES (?,?,?,?,?)',(codigo,descripcion,marca,stock,precio))
+            self.conexion.commit()
+            
     
     def actualizarDescripcion(self): #Funcion para actualizar la descripcion
         codigo = self.entry.get() #Se toman los datos del campo de codigo
@@ -264,11 +330,12 @@ class Menu:
         if codigo in self.inventario: 
             self.inventario[codigo]["Descripción"] = nueva_desc
             messagebox.showinfo("Éxito",f"La nueva descripción del producto es: {nueva_desc}")
+            self.cursor.execute("UPDATE inventario SET Descripción = ? WHERE Codigo = ?", (nueva_desc,codigo))
+            self.conexion.commit()
+            self.ventanaDescripcion.destroy()# Cierra la ventana
         else:
             messagebox.showinfo("Error", "El código no existe en el inventario")
-        
-        self.entry.delete(0, tk.END)
-        self.entry1.delete(0, tk.END)
+            self.entry.delete(0, tk.END)
     
     def actualizarMarca(self):
         codigo = self.entry.get()
@@ -277,11 +344,13 @@ class Menu:
         if codigo in self.inventario:
             self.inventario[codigo]["Marca"] = nueva_marca
             messagebox.showinfo("Éxito",f"La nueva marca del producto es: {nueva_marca}")
+            self.cursor.execute("UPDATE inventario SET Marca = ? WHERE Codigo = ?", (nueva_marca,codigo))
+            self.conexion.commit()
+            self.ventanaMarca.destroy()  # Cierra la ventana
         else:
             messagebox.showinfo("Error", "El código no existe en el inventario")
+            self.entry.delete(0, tk.END)
 
-        self.entry.delete(0, tk.END)
-        self.entry2.delete(0, tk.END)
         
     def actualizarStock(self):
         codigo = self.entry.get()
@@ -292,14 +361,17 @@ class Menu:
         
         if nuevo_stock == None:
             messagebox.showinfo("Error", "Ingrese el stock correcto")
+            self.entry3.delete(0, tk.END)
         elif codigo in self.inventario:
             self.inventario[codigo]["Stock"] = nuevo_stock
             messagebox.showinfo("Éxito",f"El nuevo stock del producto es: {nuevo_stock}")
+            self.cursor.execute("UPDATE inventario SET Stock = ? WHERE Codigo = ?", (nuevo_stock,codigo))
+            self.conexion.commit()
+            self.ventanaStock.destroy()  # Cierra la ventana
         else:
             messagebox.showinfo("Error", "El código no existe en el inventario")
+            self.entry.delete(0, tk.END)
         
-        self.entry.delete(0, tk.END)
-        self.entry3.delete(0, tk.END)
     
     def actualizarPrecio(self):
         codigo = self.entry.get()
@@ -310,15 +382,29 @@ class Menu:
         
         if nuevo_precio == None:
             messagebox.showinfo("Error", "Ingrese el precio correcto")
+            self.entry4.delete(0, tk.END)
         elif codigo in self.inventario:
             self.inventario[codigo]["Precio"] = nuevo_precio
             messagebox.showinfo("Éxito",f"El nuevo precio del producto es: {nuevo_precio}")
+            self.cursor.execute("UPDATE inventario SET Precio = ? WHERE Codigo = ?", (nuevo_precio,codigo))
+            self.conexion.commit()
+            self.ventanaPrecio.destroy()  # Cierra la ventana
         else:
             messagebox.showinfo("Error", "El código no existe en el inventario")
+            self.entry.delete(0, tk.END)
     
-        self.entry.delete(0, tk.END)
-        self.entry4.delete(0, tk.END)
-    
+    def eliminarProducto(self):
+        codigo = self.entry.get()
+        if codigo in self.inventario: #Evaluamos que no se repitan los codigos de los productos y si el ingreso de stock y precio es correcto.
+            del self.inventario[codigo]
+            messagebox.showinfo("Éxito", "El producto se eliminó correctamente")
+            self.cursor.execute("DELETE FROM inventario WHERE Codigo = ?", (codigo,))
+            self.conexion.commit()  # Elimina el producto de la base de datos
+            
+            self.ventanaEliminar.destroy()  # Cierra la ventana de eliminación
+        else:
+            messagebox.showinfo("Error", "El código no existe en el inventario")
+            self.entry.delete(0, tk.END)
     
     def mostrarInventario(self): #Mostramos el inventario
         self.ventanaInventario= Toplevel()
@@ -328,12 +414,16 @@ class Menu:
         texto=tk.Text(self.ventanaInventario, bg="#AF7AC5", fg="white")
         texto.pack(padx=40, pady=20)
         
-        for codigo, detalles in self.inventario.items():
-            texto.insert(tk.END,f"Código: {codigo}\n")
-            texto.insert(tk.END,f"Descripción: {detalles['Descripción']}\n")
-            texto.insert(tk.END,f"Marca: {detalles['Marca']}\n")
-            texto.insert(tk.END,f"Stock: {detalles['Stock']}\n")
-            texto.insert(tk.END,f"Precio: {detalles['Precio']}\n\n")
+        self.cursor.execute("SELECT * FROM inventario")
+        rows = self.cursor.fetchall()
+        
+        for row in rows:
+            codigo, descripcion, marca, stock, precio = row
+            texto.insert(tk.END, f"Código: {codigo}\n")
+            texto.insert(tk.END, f"Descripción: {descripcion}\n")
+            texto.insert(tk.END, f"Marca: {marca}\n")
+            texto.insert(tk.END, f"Stock: {stock}\n")
+            texto.insert(tk.END, f"Precio: {precio}\n\n")
             
         Cerrar_button = tk.Button(self.ventanaInventario, text="Cerrar", command=self.ventanaInventario.destroy,bg="#C00C0C", fg="white", width=10)
         Cerrar_button.pack(pady=15)
