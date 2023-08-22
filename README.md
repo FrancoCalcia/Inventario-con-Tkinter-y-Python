@@ -17,15 +17,23 @@ Este proyecto consiste en una aplicación de inventario que permite agregar, vis
 
 A continuación, algunas capturas de pantalla de la aplicación:
 
-![Captura de Pantalla 1](screenshots/screenshot.png)
-*Menu principal.*
+*Menu principal:*
+
+![Captura de Pantalla 1](screenshots/screenshots.png)
+
+*--------------------------------------------------------------------------------*
+
+*Agregar nuevos productos al inventario:*
+
+![Captura de Pantalla 2](screenshots/screenshots2.png)
+
+*--------------------------------------------------------------------------------*
+
+*Visualización del inventario completo:*
+
+![Captura de Pantalla 3](screenshots/screenshots1.png)
 
 
-![Captura de Pantalla 1](screenshots/screenshot2.png)
-*Agregar nuevos productos al inventario.*
-
-![Captura de Pantalla 2](screenshots/screenshot1.png)
-*Visualización del inventario completo.*
 
 ## Requisitos
 
